@@ -16,12 +16,12 @@ namespace Ian.HttpClient.Configuration
 
         public SectionConfigModel this[int index]
         {
-            get { return Configs[index]; }
+            get { return (Configs = Configs ?? new List<SectionConfigModel>())[index]; }
         }
 
         public SectionConfigModel this[string name]
         {
-            get { return Configs.FirstOrDefault(t => t.Name == name); }
+            get { return (Configs = Configs ?? new List<SectionConfigModel>()).FirstOrDefault(t => t.Name == name); }
         }
     }
 
