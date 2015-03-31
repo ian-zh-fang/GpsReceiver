@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Ian.UdpClient.Client" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Client.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ian.UdpClient.UdpEventArg" Collapsed="true">
+    <Position X="5.5" Y="1.5" Width="1.5" />
+    <AssociationLine Name="Code" Type="Ian.UdpClient.EventCode">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.64" Y="0.185" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAAAAAABAAAABAAAAAAAA=</HashCode>
+      <FileName>UdpEventArg.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Code" />
+    </ShowAsAssociation>
+  </Class>
+  <Enum Name="Ian.UdpClient.EventCode" Collapsed="true">
+    <Position X="5.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAIAAAAAAAAAEAAAAAAAAABAAACAAAA=</HashCode>
+      <FileName>EventCode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>
