@@ -42,6 +42,8 @@
     <Compile Include="Client.cs" />
     <Compile Include="EventCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UdpDatagramAnalyzer\DatagramAnalyzer.cs" />
+    <Compile Include="UdpDatagramAnalyzer\SimpleDatagramAnalyzer.cs" />
     <Compile Include="UdpEventArg.cs" />
     <Compile Include="UdpSimpleClient.cs" />
   </ItemGroup>
@@ -54,9 +56,7 @@
       <Name>Ian.Configuration</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Configuration\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
