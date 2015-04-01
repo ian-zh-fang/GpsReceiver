@@ -10,11 +10,11 @@ namespace Ian.UdpClient
         /// <summary>
         /// 本地地址簇
         /// </summary>
-        private static readonly System.Net.IPAddress[] ADDRESSES;
+        private static readonly System.Net.IPAddress[] Addresses;
         /// <summary>
         /// 本地 IPv4 地址
         /// </summary>
-        private static readonly System.Net.IPAddress LOCALIPV4ADDRESS;
+        private static readonly System.Net.IPAddress LocalIpv4Address;
         /// <summary>
         /// 网络数据报，本地接收端口
         /// </summary>
@@ -24,8 +24,8 @@ namespace Ian.UdpClient
         static UdpSimpleClient()
         {
             string hostname = System.Net.Dns.GetHostName();
-            ADDRESSES = System.Net.Dns.GetHostAddresses(hostname);
-            LOCALIPV4ADDRESS = ADDRESSES[3];
+            Addresses = System.Net.Dns.GetHostAddresses(hostname);
+            LocalIpv4Address = Addresses.FirstOrDefault(t => t.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
         }
         
         //_actor.
@@ -36,7 +36,7 @@ namespace Ian.UdpClient
 
         protected sealed override System.Net.Sockets.UdpClient CreateUdpClient()
         {
-            System.Net.IPEndPoint localIpEndPoint = new System.Net.IPEndPoint(LOCALIPV4ADDRESS, _Port);
+            System.Net.IPEndPoint localIpEndPoint = new System.Net.IPEndPoint(LocalIpv4Address, _Port);
             System.Net.Sockets.UdpClient client = new System.Net.Sockets.UdpClient(localIpEndPoint);
             return client;
         }

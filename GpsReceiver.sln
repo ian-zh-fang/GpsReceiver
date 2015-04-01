@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ian.UdpClient", "Ian.UdpCli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ian.UnitTest.UdpCliengUnitTest", "Ian.UnitTest.UdpCliengUnitTest\Ian.UnitTest.UdpCliengUnitTest.csproj", "{2267D329-1ADD-4075-8747-E8BA055B8335}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ian.UnitTest.UdpClientUnitTest", "Ian.UnitTest.UdpClientUnitTest\Ian.UnitTest.UdpClientUnitTest.csproj", "{AE3EA7C7-AE10-4A7B-931D-CC8128D2C26F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{2267D329-1ADD-4075-8747-E8BA055B8335}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2267D329-1ADD-4075-8747-E8BA055B8335}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2267D329-1ADD-4075-8747-E8BA055B8335}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE3EA7C7-AE10-4A7B-931D-CC8128D2C26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE3EA7C7-AE10-4A7B-931D-CC8128D2C26F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE3EA7C7-AE10-4A7B-931D-CC8128D2C26F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE3EA7C7-AE10-4A7B-931D-CC8128D2C26F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,5 +82,6 @@ Global
 		{4899DA6D-F188-4F65-A083-79C94B43BC66} = {3155BA49-0435-44B6-91D8-5FE879C1DE84}
 		{ECCCD58B-C4BE-413D-9A33-128827B3A2D6} = {189F9AD5-5E88-4E9C-8B7B-CDFDF7FAD394}
 		{2267D329-1ADD-4075-8747-E8BA055B8335} = {3155BA49-0435-44B6-91D8-5FE879C1DE84}
+		{AE3EA7C7-AE10-4A7B-931D-CC8128D2C26F} = {3155BA49-0435-44B6-91D8-5FE879C1DE84}
 	EndGlobalSection
 EndGlobal

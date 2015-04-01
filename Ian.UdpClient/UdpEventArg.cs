@@ -39,8 +39,9 @@ namespace Ian.UdpClient
         { 
             get 
             {
-                byte[] buffer = new byte[(_Data = _Data ?? new byte[0]).Length];
-                Array.Copy(_Data, buffer, 0);
+                int len = (_Data = _Data ?? new byte[0]).Length;
+                byte[] buffer = new byte[len];
+                Array.Copy(_Data, buffer, len);
                 return buffer;
             }
             private set { _Data = value; }

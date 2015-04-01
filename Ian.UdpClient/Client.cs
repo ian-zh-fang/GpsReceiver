@@ -11,10 +11,8 @@ namespace Ian.UdpClient
 {
     public abstract class Client
     {
-        /// <summary>
-        /// 远程连接端点
-        /// </summary>
-        private System.Net.IPEndPoint _RemoteIpEndPoint;
+        private const int MAXWAITTIME = 10000;
+
         /// <summary>
         /// System.Net.Sockets.UdpClient 数据报协议（Udp）服务
         /// </summary>
@@ -90,11 +88,7 @@ namespace Ian.UdpClient
         /// 此处创建底层数据报协议（UDP）网络服务；
         /// 并开启数据接收线程
         /// </summary>
-        /// <param name="remotePort">
-        /// 远程连接发送数据报端口，标识只接收来自远程连接的当前指定的端口的数据；
-        /// 设为 0，标识不限制任何端口
-        /// </param>
-        public void Open(int remotePort = 0)
+        public void Open()
         {
             //如果缓存存在，那么不在继续调用程序执行端口再次打开
             if (_UdpClient != null) return;
@@ -103,7 +97,7 @@ namespace Ian.UdpClient
             _UdpClient = CreateUdpClient();
 
             //此处开始接收网络数据报
-            ExecuteAsync(remotePort);
+            ExecuteAsync();
         }
 
         /// <summary>
@@ -112,9 +106,10 @@ namespace Ian.UdpClient
         /// </summary>
         public void Close()
         {
-            if (_UdpClient == null) return;
+            if (_CancelToken == null) return;
 
             //此处异步调用请求停止接收网络数据报
+            _CancelToken.CancelAfter(1000);
         }
 
         /// <summary>
@@ -123,19 +118,22 @@ namespace Ian.UdpClient
         /// <returns>System.Net.Sockets.UdpClient 的一个实例</returns>
         protected abstract System.Net.Sockets.UdpClient CreateUdpClient();
 
-        private async void ExecuteAsync(int remotePort)
+        private async void ExecuteAsync()
         {
             //程序开始执行
             OpenTrigger();
-            //创建远程连接端点
-            CreateRemoteIpEndPoint(remotePort);
             //创建包含取消操作的闭包
             _CancelToken = new System.Threading.CancellationTokenSource();
 
             //程序执行中...
-            await Task.Factory.StartNew(() => ExecuteCoreAsync(), _CancelToken.Token);
-
-            try { }
+            try 
+            {
+                await Task.Factory.StartNew(new Action(ExecuteCoreAsync), _CancelToken.Token);
+            }
+            catch (Exception e)
+            {
+                ExceptionTrigger(e);
+            }
             finally
             {
                 //释放相关资源
@@ -144,25 +142,12 @@ namespace Ian.UdpClient
                 _UdpClient.Client.Close();
                 _UdpClient.Close();
             }
-            _RemoteIpEndPoint = null;
             _CancelToken = null;
             _UdpClient = null;
             GC.Collect();//显示调用GC，强制垃圾回收
 
             //程序执行结束
             CloseTrigger();
-        }
-
-        /// <summary>
-        /// 创建远程连接端点
-        /// </summary>
-        /// <param name="port">端口(0~65535)</param>
-        private void CreateRemoteIpEndPoint(int port)
-        {
-            //防止重复创建同样的 System.Net.IPEndPoint 实例，
-            if (_RemoteIpEndPoint != null && _RemoteIpEndPoint.Port == port) return;
-
-            _RemoteIpEndPoint = new IPEndPoint(System.Net.IPAddress.Any, port);
         }
 
         /// <summary>
@@ -173,12 +158,32 @@ namespace Ian.UdpClient
             //异步取消，停止接收数据报
             if (_CancelToken.IsCancellationRequested) return;
 
-            Task<System.Net.Sockets.UdpReceiveResult> task = _UdpClient.ReceiveAsync();
-            System.Net.Sockets.UdpReceiveResult result = task.Result;
-            ReceiveTrigger(result.Buffer);
+            try
+            {
+                Task<System.Net.Sockets.UdpReceiveResult> task = _UdpClient.ReceiveAsync();
+                //等待指定时间
+                if (task.Wait(MAXWAITTIME))
+                {
+                    System.Net.Sockets.UdpReceiveResult result = task.Result;
+                    ReceiveTrigger(result.Buffer);
+                }
 
-            //递归调用，循环获取数据
-            ExecuteCoreAsync();
+                //递归调用，循环获取数据
+                ExecuteCoreAsync();
+            }
+            catch (AggregateException e)
+            {
+                e.Flatten().Handle(t => true);
+                ExceptionTrigger(e.InnerException);
+            }
+            catch (Exception e)
+            {
+                ExceptionTrigger(e);
+            }
+            finally 
+            {
+                
+            }
         }
     }
 }
