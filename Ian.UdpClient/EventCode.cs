@@ -26,9 +26,5 @@ namespace Ian.UdpClient
         /// 执行异常
         /// </summary>
         Exception = 0x04,
-        /// <summary>
-        /// 等待超时
-        /// </summary>
-        TimeOut = 0x08,
     }
 }

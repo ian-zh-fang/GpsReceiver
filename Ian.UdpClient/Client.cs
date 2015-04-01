@@ -3,11 +3,182 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
+using System.Net.Sockets;
+using System.IO;
 
 namespace Ian.UdpClient
 {
     public abstract class Client
     {
+        /// <summary>
+        /// 远程连接端点
+        /// </summary>
+        private System.Net.IPEndPoint _RemoteIpEndPoint;
+        /// <summary>
+        /// System.Net.Sockets.UdpClient 数据报协议（Udp）服务
+        /// </summary>
+        private System.Net.Sockets.UdpClient _UdpClient;
+        /// <summary>
+        /// 通知 System.Threading.CancellationToken，告知其应被取消。
+        /// </summary>
+        private System.Threading.CancellationTokenSource _CancelToken;
 
+        /// <summary>
+        /// Udp 打开指定网络端口，并开始接收数据工作，触发当前事件
+        /// </summary>
+        public event EventHandler<UdpEventArg> OnOpened;
+        
+        /// <summary>
+        /// Udp 网络数据端口被关闭，触发当前事件
+        /// </summary>
+        public event EventHandler<UdpEventArg> OnClosed;
+        
+        /// <summary>
+        /// 程序接收到网络数据，触发当前事件
+        /// </summary>
+        public event EventHandler<UdpEventArg> OnReceived;
+
+        /// <summary>
+        /// 程序执行错误，触发当前事件
+        /// </summary>
+        public event EventHandler<UdpEventArg> OnException;
+
+        /// <summary>
+        /// 触发 OnOpened 事件
+        /// </summary>
+        /// <param name="sender">触发当前事件对象</param>
+        protected virtual void OpenTrigger(object sender = null)
+        {
+            if (OnOpened != null)
+                OnOpened(sender ?? this, UdpEventArg.CreateOpen());
+        }
+
+        /// <summary>
+        /// 触发 OnClosed 事件
+        /// </summary>
+        /// <param name="sender">触发当前事件对象</param>
+        protected virtual void CloseTrigger(object sender = null)
+        {
+            if (OnClosed != null)
+                OnClosed(sender ?? this, UdpEventArg.CreateClose());
+        }
+
+        /// <summary>
+        /// 触发 OnReceived 事件
+        /// </summary>
+        /// <param name="sender">触发当前事件对象</param>
+        /// <param name="data">接收到的数据正文信息</param>
+        protected virtual void ReceiveTrigger(byte[] data, object sender = null)
+        {
+            if (OnReceived != null)
+                OnReceived(sender ?? this, UdpEventArg.CreateReceive(data));
+        }
+
+        /// <summary>
+        /// 触发 OnException 事件
+        /// </summary>
+        /// <param name="sender">触发当前事件对象</param>
+        /// <param name="e">程序执行时，发生的错误信息对象</param>
+        protected virtual void ExceptionTrigger(Exception e, object sender = null)
+        {
+            if (OnException != null)
+                OnException(sender ?? this, UdpEventArg.CreateException(e));
+        }
+
+        /// <summary>
+        /// 此处创建底层数据报协议（UDP）网络服务；
+        /// 并开启数据接收线程
+        /// </summary>
+        /// <param name="remotePort">
+        /// 远程连接发送数据报端口，标识只接收来自远程连接的当前指定的端口的数据；
+        /// 设为 0，标识不限制任何端口
+        /// </param>
+        public void Open(int remotePort = 0)
+        {
+            //如果缓存存在，那么不在继续调用程序执行端口再次打开
+            if (_UdpClient != null) return;
+
+            //创建底层数据报协议（UDP）网络服务，并缓存当前的服务
+            _UdpClient = CreateUdpClient();
+
+            //此处开始接收网络数据报
+            ExecuteAsync(remotePort);
+        }
+
+        /// <summary>
+        /// 此处关闭当前端口，取消数据接收工作；
+        /// 并释放占用的系统资源，包括内存和套接字
+        /// </summary>
+        public void Close()
+        {
+            if (_UdpClient == null) return;
+
+            //此处异步调用请求停止接收网络数据报
+        }
+
+        /// <summary>
+        /// 创建 System.Net.Sockets.UdpClient 的实例
+        /// </summary>
+        /// <returns>System.Net.Sockets.UdpClient 的一个实例</returns>
+        protected abstract System.Net.Sockets.UdpClient CreateUdpClient();
+
+        private async void ExecuteAsync(int remotePort)
+        {
+            //程序开始执行
+            OpenTrigger();
+            //创建远程连接端点
+            CreateRemoteIpEndPoint(remotePort);
+            //创建包含取消操作的闭包
+            _CancelToken = new System.Threading.CancellationTokenSource();
+
+            //程序执行中...
+            await Task.Factory.StartNew(() => ExecuteCoreAsync(), _CancelToken.Token);
+
+            try { }
+            finally
+            {
+                //释放相关资源
+                _CancelToken.Dispose();
+
+                _UdpClient.Client.Close();
+                _UdpClient.Close();
+            }
+            _RemoteIpEndPoint = null;
+            _CancelToken = null;
+            _UdpClient = null;
+            GC.Collect();//显示调用GC，强制垃圾回收
+
+            //程序执行结束
+            CloseTrigger();
+        }
+
+        /// <summary>
+        /// 创建远程连接端点
+        /// </summary>
+        /// <param name="port">端口(0~65535)</param>
+        private void CreateRemoteIpEndPoint(int port)
+        {
+            //防止重复创建同样的 System.Net.IPEndPoint 实例，
+            if (_RemoteIpEndPoint != null && _RemoteIpEndPoint.Port == port) return;
+
+            _RemoteIpEndPoint = new IPEndPoint(System.Net.IPAddress.Any, port);
+        }
+
+        /// <summary>
+        /// 此处用来循环接收网络数据报
+        /// </summary>
+        private void ExecuteCoreAsync()
+        {
+            //异步取消，停止接收数据报
+            if (_CancelToken.IsCancellationRequested) return;
+
+            Task<System.Net.Sockets.UdpReceiveResult> task = _UdpClient.ReceiveAsync();
+            System.Net.Sockets.UdpReceiveResult result = task.Result;
+            ReceiveTrigger(result.Buffer);
+
+            //递归调用，循环获取数据
+            ExecuteCoreAsync();
+        }
     }
 }

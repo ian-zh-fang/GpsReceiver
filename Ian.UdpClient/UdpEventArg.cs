@@ -10,17 +10,26 @@ namespace Ian.UdpClient
     /// </summary>
     public class UdpEventArg:EventArgs
     {
-
+        private EventCode _Code;
         /// <summary>
         /// 标识当前事件参数信息类型
         /// </summary>
-        public EventCode Code { get; private set; }
+        public EventCode Code 
+        {
+            get { return _Code; }
+            private set { _Code = value; }
+        }
 
+        private Exception _Exception;
         /// <summary>
         /// 异常信息
         /// <para>当 Code 的值为 EventCode.Exception 时，当前属性启用；否则为 NULL</para>
         /// </summary>
-        public Exception Exception { get; private set; }
+        public Exception Exception 
+        {
+            get { return _Exception; }
+            private set { _Exception = value; }
+        }
 
         private byte[] _Data;
         /// <summary>
@@ -47,6 +56,9 @@ namespace Ian.UdpClient
             private set { _CreateTime = value; }
         }
 
+        /// <summary>
+        /// _actor.
+        /// </summary>
         protected UdpEventArg() { }
 
         /// <summary>
@@ -102,19 +114,6 @@ namespace Ian.UdpClient
             {
                 Code = EventCode.Exception,
                 Exception = e
-            };
-        }
-
-        /// <summary>
-        /// 创建一个 TimeOut 类型的事件模型实例
-        /// <para>标识接收数据超时</para>
-        /// </summary>
-        /// <returns></returns>
-        public static UdpEventArg CreateTimeOut()
-        {
-            return new UdpEventArg()
-            {
-                Code = EventCode.TimeOut
             };
         }
     }
