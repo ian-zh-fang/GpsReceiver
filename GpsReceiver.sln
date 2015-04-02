@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ian.UnitTest.UtilityUnitTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ian.UnitTest.GpsAnalyzerUnitTest", "Ian.UnitTest.GpsAnalyzer\Ian.UnitTest.GpsAnalyzerUnitTest.csproj", "{168F5E60-0926-46D5-B3E3-B1F099F78490}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiger.GpsReceiver", "Tiger.GpsReceiver\Tiger.GpsReceiver.csproj", "{9A6C6A25-EAC8-4450-A1CD-3208BA841203}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{168F5E60-0926-46D5-B3E3-B1F099F78490}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{168F5E60-0926-46D5-B3E3-B1F099F78490}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{168F5E60-0926-46D5-B3E3-B1F099F78490}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A6C6A25-EAC8-4450-A1CD-3208BA841203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A6C6A25-EAC8-4450-A1CD-3208BA841203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A6C6A25-EAC8-4450-A1CD-3208BA841203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A6C6A25-EAC8-4450-A1CD-3208BA841203}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,5 +110,6 @@ Global
 		{B1002F43-AC6C-4E15-AC36-3A27D47F6823} = {B2DE8A06-B67E-4814-BE6B-3FD83006206F}
 		{D7798683-3095-429E-BBA3-BBA4C6C25F34} = {3155BA49-0435-44B6-91D8-5FE879C1DE84}
 		{168F5E60-0926-46D5-B3E3-B1F099F78490} = {3155BA49-0435-44B6-91D8-5FE879C1DE84}
+		{9A6C6A25-EAC8-4450-A1CD-3208BA841203} = {B2DE8A06-B67E-4814-BE6B-3FD83006206F}
 	EndGlobalSection
 EndGlobal

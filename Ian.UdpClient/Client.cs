@@ -23,6 +23,14 @@ namespace Ian.UdpClient
         private System.Threading.CancellationTokenSource _CancelToken;
 
         /// <summary>
+        /// 本地Ipv4地址
+        /// </summary>
+        public string LocalEndPoint
+        {
+            get { return (null == _UdpClient) ? string.Empty : _UdpClient.Client.LocalEndPoint.ToString(); }
+        }
+
+        /// <summary>
         /// Udp 打开指定网络端口，并开始接收数据工作，触发当前事件
         /// </summary>
         public event EventHandler<UdpEventArg> OnOpened;
@@ -120,6 +128,7 @@ namespace Ian.UdpClient
 
         private async void ExecuteAsync()
         {
+            await Task.Delay(1000);
             //程序开始执行
             OpenTrigger();
             //创建包含取消操作的闭包

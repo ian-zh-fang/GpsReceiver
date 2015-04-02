@@ -23,38 +23,22 @@ namespace Ian.UdpClient.UdpDatagramAnalyzer
         /// <summary>
         /// Udp 打开指定网络端口，并开始接收数据工作，触发当前事件
         /// </summary>
-        public event EventHandler<UdpEventArg> OnOpened
-        {
-            add { _Client.OnOpened += value; }
-            remove { _Client.OnOpened -= value; }
-        }
+        public event EventHandler<UdpEventArg> OnOpened;
 
         /// <summary>
         /// Udp 网络数据端口被关闭，触发当前事件
         /// </summary>
-        public event EventHandler<UdpEventArg> OnClosed
-        {
-            add { _Client.OnClosed += value; }
-            remove { _Client.OnClosed -= value; }
-        }
+        public event EventHandler<UdpEventArg> OnClosed;
 
         /// <summary>
         /// 程序接收到网络数据，触发当前事件
         /// </summary>
-        public event EventHandler<UdpEventArg> OnReceived
-        {
-            add { _Client.OnReceived += value; }
-            remove { _Client.OnReceived -= value; }
-        }
+        public event EventHandler<UdpEventArg> OnReceived;
 
         /// <summary>
         /// 程序执行错误，触发当前事件
         /// </summary>
-        public event EventHandler<UdpEventArg> OnException
-        {
-            add { _Client.OnException += value; }
-            remove { _Client.OnException -= value; }
-        }
+        public event EventHandler<UdpEventArg> OnException;
 
         /// <summary>
         /// 创建 UdpClient.Client 的一个实例
@@ -80,13 +64,37 @@ namespace Ian.UdpClient.UdpDatagramAnalyzer
         {
             _Client = _Client ?? CreateUdpClient(port);
             _Client.OnReceived += _Client_OnReceived;
+            _Client.OnClosed += _Client_OnClosed;
+            _Client.OnException += _Client_OnException;
+            _Client.OnOpened += _Client_OnOpened;
 
             _Client.Open();
+        }
+
+        private void _Client_OnOpened(object sender, UdpEventArg e)
+        {
+            if (null != OnOpened)
+                OnOpened(sender ?? this, e);
+        }
+
+        private void _Client_OnException(object sender, UdpEventArg e)
+        {
+            if (null != OnException)
+                OnException(sender ?? this, e);
+        }
+
+        private void _Client_OnClosed(object sender, UdpEventArg e)
+        {
+            if (null != OnClosed)
+                OnClosed(sender ?? this, e);
         }
 
         //此处开始解析数据
         private void _Client_OnReceived(object sender, UdpEventArg e)
         {
+            if (null != OnReceived)
+                OnReceived(sender ?? this, e);
+
             //缓存接收到的网络数据报；
             //并解析所有收到的数据报
             _CacheBuffer.AddRange(e.Data);

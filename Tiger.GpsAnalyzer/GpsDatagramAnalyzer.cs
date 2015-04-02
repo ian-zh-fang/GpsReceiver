@@ -75,10 +75,14 @@ namespace Tiger.GpsAnalyzer
             int index = context.IndexOf(HEADERCONTEXT, offset);
             if (-1 == index)
                 return offset;
+
+            index += HEADERCONTEXT.Length;
             //查找协议头
             index = context.IndexOf(PROTOCOLSTART, index);
             if (-1 == index)
                 return offset;
+
+            index += PROTOCOLSTART.Length;
             //查找第二个数据报开头
             int sindex = context.IndexOf(HEADERCONTEXT, index);
 
@@ -89,7 +93,7 @@ namespace Tiger.GpsAnalyzer
 
             //出现粘包；
             //并且上一包数据断尾
-            if (indexe > sindex)
+            if (sindex >= 0 && indexe > sindex)
                 return Analyze(context, sindex);
             //重新计算当前
             indexe += PROTOCOLEND.Length;
